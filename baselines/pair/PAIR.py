@@ -11,6 +11,7 @@ from .system_prompts import get_attacker_system_prompt
 
 class PAIR(SingleBehaviorRedTeamingMethod):
     use_ray = True
+    # use_ray = False
     
     def __init__(self, attack_model, target_model, judge_model, targets_path, attack_max_n_tokens,
                 target_max_n_tokens, judge_max_n_tokens, cutoff_score=10, max_retries=5,

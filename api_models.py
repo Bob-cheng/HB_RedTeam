@@ -8,11 +8,14 @@ from typing import List
 import google.generativeai as genai
 import time
 from mistralai.client import MistralClient
-from mistralai.models.chat_completion import ChatMessage
+# from mistralai.models.chat_completion import ChatMessage
 
 import re
 
 def api_models_map(model_name_or_path=None, token=None, **kwargs):
+    if 'openrouter/' in model_name_or_path:
+        model_name = model_name_or_path[11:]
+        return GPT(model_name, token, base_url='https://openrouter.ai/api/v1')
     if 'gpt-' in model_name_or_path:
         if 'vision' in model_name_or_path:
             return GPTV(model_name_or_path, token)
@@ -22,8 +25,8 @@ def api_models_map(model_name_or_path=None, token=None, **kwargs):
         return Claude(model_name_or_path, token)
     elif 'gemini-' in model_name_or_path:
         return Gemini(model_name_or_path, token)
-    elif re.match(r'mistral-(tiny|small|medium|large)$', model_name_or_path):
-        return Mistral(model_name_or_path, token)
+    # elif re.match(r'mistral-(tiny|small|medium|large)$', model_name_or_path):
+    #     return Mistral(model_name_or_path, token)
     return None
 
 class GPT():
@@ -33,9 +36,11 @@ class GPT():
     API_MAX_RETRY = 5
     API_TIMEOUT = 60
 
-    def __init__(self, model_name, api_key):
+    def __init__(self, model_name, api_key, base_url=None, **kwargs):
         self.model_name = model_name
-        self.client = OpenAI(api_key=api_key, timeout=self.API_TIMEOUT)
+        # base_url 应该是 API 域名结尾，不需要 /chat/completions
+        # 例如: "https://api.openai.com/v1"
+        self.client = OpenAI(api_key=api_key, base_url=base_url, timeout=self.API_TIMEOUT)
 
     def _generate(self, prompt: str, 
                 max_new_tokens: int, 
@@ -253,49 +258,54 @@ class Gemini():
         return [self._generate(prompt, max_new_tokens, temperature, top_p) for prompt in prompts]
     
 
-class Mistral():
-    API_RETRY_SLEEP = 10
-    API_ERROR_OUTPUT = "$ERROR$"
-    API_QUERY_SLEEP = 0.5
-    API_MAX_RETRY = 5
+# class Mistral():
+#     API_RETRY_SLEEP = 10
+#     API_ERROR_OUTPUT = "$ERROR$"
+#     API_QUERY_SLEEP = 0.5
+#     API_MAX_RETRY = 5
 
-    def __init__(self, model_name, token):    
-        self.model_name = model_name
-        self.client = MistralClient(api_key=token)
+#     def __init__(self, model_name, token):    
+#         self.model_name = model_name
+#         self.client = MistralClient(api_key=token)
 
-    def _generate(self, prompt: str, 
-                max_new_tokens: int, 
-                temperature: float,
-                top_p: float):
+#     def _generate(self, prompt: str, 
+#                 max_new_tokens: int, 
+#                 temperature: float,
+#                 top_p: float):
         
-        output = self.API_ERROR_OUTPUT
-        messages = [
-            ChatMessage(role="user", content=prompt)
-        ]
-        for _ in range(self.API_MAX_RETRY):
-            try:
-                chat_response = self.client.chat(
-                    model=self.model,
-                    temperature=temperature,
-                    max_tokens=max_new_tokens,
-                    messages=messages,
-                )
-                output = chat_response.choices[0].message.content
-                break
-            except Exception as e:
-                print(type(e), e)
-                time.sleep(self.API_RETRY_SLEEP)
-            time.sleep(self.API_QUERY_SLEEP)
-        return output 
+#         output = self.API_ERROR_OUTPUT
+#         messages = [
+#             ChatMessage(role="user", content=prompt)
+#         ]
+#         for _ in range(self.API_MAX_RETRY):
+#             try:
+#                 chat_response = self.client.chat(
+#                     model=self.model,
+#                     temperature=temperature,
+#                     max_tokens=max_new_tokens,
+#                     messages=messages,
+#                 )
+#                 output = chat_response.choices[0].message.content
+#                 break
+#             except Exception as e:
+#                 print(type(e), e)
+#                 time.sleep(self.API_RETRY_SLEEP)
+#             time.sleep(self.API_QUERY_SLEEP)
+#         return output 
     
-    def generate(self, 
-                prompts: List[str],
-                max_new_tokens: int, 
-                temperature: float,
-                top_p: float = 1.0,
-                use_tqdm: bool=False,
-                **kwargs):
+#     def generate(self, 
+#                 prompts: List[str],
+#                 max_new_tokens: int, 
+#                 temperature: float,
+#                 top_p: float = 1.0,
+#                 use_tqdm: bool=False,
+#                 **kwargs):
         
-        if use_tqdm:
-            prompts = tqdm(prompts)
-        return [self._generate(prompt, max_new_tokens, temperature, top_p) for prompt in prompts]
+#         if use_tqdm:
+#             prompts = tqdm(prompts)
+#         return [self._generate(prompt, max_new_tokens, temperature, top_p) for prompt in prompts]
+    
+if __name__ == "__main__":
+    model = api_models_map("openrouter/openai/gpt-4.1-nano", token="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")
+    response = model.generate(["你好"], max_new_tokens=100, temperature=0.7, use_tqdm=True)
+    print(response)

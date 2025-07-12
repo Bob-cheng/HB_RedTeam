@@ -25,7 +25,7 @@ class JudgeBase:
         match = re.search(pattern, raw_output)
         output = int(match.group(1)) if match else None
         if output is None:
-            # print(f"Error in processing judge output: {raw_output}" )
+            print(f"Error in processing judge output: {raw_output}" )
             output = 1
         return output
 

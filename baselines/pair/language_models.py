@@ -119,7 +119,7 @@ class GPT(LanguageModel):
                     max_tokens=max_n_tokens,
                     temperature=temperature,
                     top_p=top_p,
-                    request_timeout=self.API_TIMEOUT,
+                    timeout=self.API_TIMEOUT,
                 )
                 output = response.choices[0].message.content
                 break
@@ -128,6 +128,7 @@ class GPT(LanguageModel):
                 time.sleep(self.API_RETRY_SLEEP)
         
             time.sleep(self.API_QUERY_SLEEP)
+        print(output)
         return output 
     
     def batched_generate(self, 
@@ -136,6 +137,13 @@ class GPT(LanguageModel):
                         temperature: float,
                         top_p: float = 1.0, **kwargs):
         return [self.generate(conv, max_n_tokens, temperature, top_p) for conv in convs_list]
+    
+class OpenRouterLLM(GPT):
+    def __init__(self, model_name, token, base_url='https://openrouter.ai/api/v1'):
+        super().__init__(model_name, token)
+        self.client.base_url = base_url
+        print(f"==> Using OpenRouter base_url: {base_url}")
+
 
 class Claude():
     API_RETRY_SLEEP = 10

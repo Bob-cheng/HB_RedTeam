@@ -2,7 +2,7 @@ import copy
 import re
 from .common import extract_json
 from .judges import GPTJudge, OpenSourceJudge
-from .language_models import GPT, Claude, Gemini, HuggingFace, VLLM
+from .language_models import GPT, Claude, Gemini, HuggingFace, VLLM, OpenRouterLLM
 from ..model_utils import get_template
 import ray
 
@@ -103,12 +103,11 @@ class AttackLM():
         for conv, prompt in zip(convs_list, prompts_list):
             conv.append_message(conv.roles[0], prompt)
             # Get prompts
-            if "gpt" in self.model_name_or_path:
+            if "gpt" in self.model_name_or_path or 'openrouter/' in self.model_name_or_path:
                 full_prompts.append(conv.to_openai_api_messages())
             else:
                 conv.append_message(conv.roles[1], init_message)
                 full_prompts.append(conv.get_prompt()[:-len(conv.sep2)])
-            
         for attempt in range(self.max_retries):
             # Subset conversations based on indices to regenerate
             full_prompts_subset = [full_prompts[i] for i in indices_to_regenerate]
@@ -118,7 +117,7 @@ class AttackLM():
                                             max_n_tokens = self.max_n_tokens,  
                                             temperature = self.temperature,
                                             stop_tokens = ["}"])
-            
+            # print(f"Attempt {attempt+1}/{self.max_retries} for {len(indices_to_regenerate)} generations on {self.model_name_or_path}")
             if self.use_ray:
                 outputs_list = ray.get(outputs_list)
             # Check for valid outputs and update the list
@@ -126,10 +125,9 @@ class AttackLM():
 
             for i, full_output in enumerate(outputs_list):
                 orig_index = indices_to_regenerate[i]
-                if "gpt" not in self.model_name_or_path:
+                if "gpt" not in self.model_name_or_path and "openrouter/" not in self.model_name_or_path:
                     full_output = init_message + full_output
                     if full_output[-1] != "}": full_output += "}"
-
                 attack_dict, json_str = extract_json(full_output)
                 
                 if attack_dict is not None:
@@ -181,7 +179,7 @@ class TargetLM():
                 prompt = f"{context_str}\n\n---\n\n{prompt}"
                 
             conv.append_message(conv.roles[0], prompt)
-            if "gpt-" in self.model_name_or_path:
+            if "gpt-" in self.model_name_or_path or 'openrouter/' in self.model_name_or_path:
                 # Openai does not have separators
                 full_prompts.append(conv.to_openai_api_messages())
             elif "gemini-" in self.model_name_or_path:
@@ -199,7 +197,11 @@ class TargetLM():
         return outputs_list if not self.use_ray else ray.get(outputs_list) 
 
 def load_judge(model_name_or_path, max_n_tokens, preloaded_model=None, token=None, **model_kwargs):
-    if "gpt" in model_name_or_path:
+    if 'openrouter/' in model_name_or_path:
+        model_name = model_name_or_path[11:]
+        judge_model = OpenRouterLLM(model_name, token=token)
+        return GPTJudge(model_name_or_path, max_n_tokens,judge_model)
+    elif "gpt" in model_name_or_path:
         judge_model = GPT(model_name=model_name_or_path, token=token) 
         return GPTJudge(model_name_or_path, max_n_tokens, judge_model)
     else:
@@ -208,7 +210,10 @@ def load_judge(model_name_or_path, max_n_tokens, preloaded_model=None, token=Non
         return OpenSourceJudge(model_name_or_path, max_n_tokens, judge_model=preloaded_model)
 
 def load_indiv_model(model_name_or_path, use_vllm=False, token=None, **model_kwargs):
-    if 'gpt-' in model_name_or_path:
+    if 'openrouter/' in model_name_or_path:
+        model_name = model_name_or_path[11:]
+        lm = OpenRouterLLM(model_name, token=token)
+    elif 'gpt-' in model_name_or_path:
         lm = GPT(model_name_or_path, token=token)
     elif 'claude-' in model_name_or_path:
         lm = Claude(model_name_or_path, token=token)

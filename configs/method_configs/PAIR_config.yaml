@@ -1,12 +1,12 @@
 default_method_hyperparameters:
     targets_path: ./data/optimizer_targets/harmbench_targets_text.json
-    n_streams: 20 # N Number of concurrent jailbreak conversations.
+    n_streams: 10 # N Number of concurrent jailbreak conversations.
     steps: 3 # K Number of steps (queries) to run the attack for each behavior.
     keep_last_n: 3 # Number of responses to save in conversation history of attack model. If this is too large, then it may exceed the context window of the model.
     max_retries: 20 # Maximum number of tries attempts, in case of generation/api errors.
     attack_max_n_tokens: 500 # Maximum number of generated tokens for the attacker.
     target_max_n_tokens: 150 # Maximum number of generated tokens for the target.
-    judge_max_n_tokens: 5 # Maximum number of generate tokens for judge model
+    judge_max_n_tokens: 10 # Maximum number of generate tokens for judge model
     
     # Generation kwargs for attack models
     attack_temp: 1.0 
@@ -251,3 +251,44 @@ gemini:
     gcp_credentials: ""
     project_id: project_id
     location: us-central1
+
+qwen-2.5-7b:
+  target_model:
+    model_name_or_path: <model_name1>['model']['model_name_or_path']
+    token: <model_name1>['model']['token']
+    fschat_template: chatgpt
+    # model_name_or_path: openrouter/google/gemini-2.5-flash
+    # token: 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
+    # fschat_template: chatgpt
+    # model_name_or_path: openrouter/openai/gpt-4.1-nano
+    # token: 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
+    # fschat_template: chatgpt
+    # model_name_or_path: gpt-4.1-nano
+    # token: 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
+    # fschat_template: chatgpt
+  attack_model:
+    model_name_or_path: openrouter/deepseek/deepseek-chat-v3-0324
+    token: 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
+    fschat_template: chatgpt
+    # model_name_or_path: openrouter/openai/gpt-4.1-nano
+    # token: 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
+    # fschat_template: chatgpt
+    # model_name_or_path: <model_name1>['model']['model_name_or_path']
+    # token: <model_name1>['model']['token']
+    # fschat_template: chatgpt
+    # model_name_or_path: gpt-4.1-nano
+    # token: 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
+    # fschat_template: chatgpt
+  judge_model:
+    # model_name_or_path: openrouter/openai/gpt-4.1-nano
+    # token: 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
+    # fschat_template: chatgpt
+    model_name_or_path: openrouter/google/gemini-2.5-flash
+    token: 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
+    fschat_template: chatgpt
+    # model_name_or_path: <model_name1>['model']['model_name_or_path']
+    # token: <model_name1>['model']['token']
+    # fschat_template: chatgpt
+    # model_name_or_path: gpt-4.1-nano
+    # token: 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
+    # fschat_template: chatgpt

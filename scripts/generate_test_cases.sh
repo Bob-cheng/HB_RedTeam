@@ -1,16 +1,28 @@
 #!/bin/bash
 source /opt/rh/devtoolset-10/enable
 
-method_name="$1"
-experiment_name="$2"
-behaviors_path="$3"
-save_dir="$4"
-start_idx="$5"
-end_idx="$6"
-behavior_ids_subset="$7"
-run_id="$8"
-overwrite="$9"
-verbose="${10}"
+# method_name="$1"
+# experiment_name="$2"
+# behaviors_path="$3"
+# save_dir="$4"
+# start_idx="$5"
+# end_idx="$6"
+# behavior_ids_subset="$7"
+# run_id="$8"
+# overwrite="$9"
+# verbose="${10}"
+
+base_save_dir="results"
+method_name="PAIR"
+experiment_name="qwen-2.5-7b"
+behaviors_path="./data/behavior_datasets/harmbench_behaviors_text_val.csv"
+save_dir="${base_save_dir}/${method_name}/${experiment_name}/test_cases"
+start_idx=0
+end_idx=2 # first 20 validation behaviors
+behavior_ids_subset=""
+run_id="0"  # useful when running multiple times with different seeds, to differentiate the output files
+overwrite="True"
+verbose="True"
 
 echo "method_name=$method_name"
 echo "experiment_name=$experiment_name"

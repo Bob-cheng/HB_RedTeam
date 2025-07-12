@@ -32,7 +32,7 @@ def extract_json(s):
             return None, None
         return parsed, json_str
     except (SyntaxError, ValueError):
-        # logging.warn(f"Error parsing extracted structure for: {s}")
+        logging.warn(f"Error parsing extracted structure for: {s}")
         return None, None
 
 def get_init_msg(behavior, target, context_str):
