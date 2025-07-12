@@ -252,43 +252,16 @@ gemini:
     project_id: project_id
     location: us-central1
 
-qwen-2.5-7b:
+<model_name1>:
   target_model:
     model_name_or_path: <model_name1>['model']['model_name_or_path']
     token: <model_name1>['model']['token']
     fschat_template: chatgpt
-    # model_name_or_path: openrouter/google/gemini-2.5-flash
-    # token: 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
-    # fschat_template: chatgpt
-    # model_name_or_path: openrouter/openai/gpt-4.1-nano
-    # token: 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
-    # fschat_template: chatgpt
-    # model_name_or_path: gpt-4.1-nano
-    # token: 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
-    # fschat_template: chatgpt
   attack_model:
     model_name_or_path: openrouter/deepseek/deepseek-chat-v3-0324
     token: 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
     fschat_template: chatgpt
-    # model_name_or_path: openrouter/openai/gpt-4.1-nano
-    # token: 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
-    # fschat_template: chatgpt
-    # model_name_or_path: <model_name1>['model']['model_name_or_path']
-    # token: <model_name1>['model']['token']
-    # fschat_template: chatgpt
-    # model_name_or_path: gpt-4.1-nano
-    # token: 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
-    # fschat_template: chatgpt
   judge_model:
-    # model_name_or_path: openrouter/openai/gpt-4.1-nano
-    # token: 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
-    # fschat_template: chatgpt
     model_name_or_path: openrouter/google/gemini-2.5-flash
     token: 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
     fschat_template: chatgpt
-    # model_name_or_path: <model_name1>['model']['model_name_or_path']
-    # token: <model_name1>['model']['token']
-    # fschat_template: chatgpt
-    # model_name_or_path: gpt-4.1-nano
-    # token: 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
-    # fschat_template: chatgpt

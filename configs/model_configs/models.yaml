@@ -304,22 +304,24 @@ mistral-medium:
     token: <your_mistral_token>
   model_type: closed_source
 
+openrouter_api_key: &key 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
+
 gpt-4.1-nano:
   model:
     model_name_or_path: openrouter/openai/gpt-4.1-nano
-    token: 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
+    token: *key
   model_type: closed_source
 
 qwen-2.5-7b:
   model:
     model_name_or_path: openrouter/qwen/qwen-2.5-7b-instruct
-    token: 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
+    token: *key
   model_type: closed_source
 
 gemini-2.5-flash:
   model:
     model_name_or_path: openrouter/google/gemini-2.5-flash
-    token: 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
+    token: *key
   model_type: closed_source
 
 
