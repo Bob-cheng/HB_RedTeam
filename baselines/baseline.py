@@ -9,6 +9,7 @@ import transformers
 import vllm
 import ray
 import fastchat
+import glob
 
 class RedTeamingMethod:
     use_ray = False
@@ -235,23 +236,31 @@ class SingleBehaviorRedTeamingMethod(RedTeamingMethod):
 
         # Load all test cases from each subset directory
         for behavior_id in behavior_ids:
-            test_cases_path = os.path.join(save_dir, 'test_cases_individual_behaviors', behavior_id, 'test_cases.json')
-            if os.path.exists(test_cases_path):
-                with open(test_cases_path, 'r') as f:
-                    test_cases_part = json.load(f)
-                for behavior_id in test_cases_part:
-                    assert behavior_id not in test_cases, f"Duplicate behavior ID: {behavior_id}"
-                test_cases.update(test_cases_part)
+            behavior_dir = os.path.join(save_dir, 'test_cases_individual_behaviors', behavior_id)
+            # Match both 'test_cases.json' and 'test_cases_*.json'
+            pattern = os.path.join(behavior_dir, 'test_cases*.json')
+            for test_cases_path in glob.glob(pattern):
+                if os.path.exists(test_cases_path):
+                    with open(test_cases_path, 'r') as f:
+                        test_cases_part = json.load(f)
+                    for behavior_id in test_cases_part:
+                        assert behavior_id not in test_cases, f"Duplicate behavior ID: {behavior_id}"
+                    test_cases.update(test_cases_part)
+
+                    
 
         # Load all logs from each subset directory
         for behavior_id in behavior_ids:
-            logs_path = os.path.join(save_dir, 'test_cases_individual_behaviors', behavior_id, 'logs.json')  # Assuming logs are saved in json format
-            if os.path.exists(logs_path):
-                with open(logs_path, 'r') as f:
-                    logs_part = json.load(f)
-                for behavior_id in logs_part:
-                    assert behavior_id not in logs, f"Duplicate behavior ID: {behavior_id}"
-                logs.update(logs_part)
+            # logs_path = os.path.join(save_dir, 'test_cases_individual_behaviors', behavior_id, 'logs.json')  # Assuming logs are saved in json format
+            logs_dir = os.path.join(save_dir, 'test_cases_individual_behaviors', behavior_id)
+            pattern = os.path.join(logs_dir, 'logs*.json')
+            for logs_path in glob.glob(pattern):
+                if os.path.exists(logs_path):
+                    with open(logs_path, 'r') as f:
+                        logs_part = json.load(f)
+                    for behavior_id in logs_part:
+                        assert behavior_id not in logs, f"Duplicate behavior ID: {behavior_id}"
+                    logs.update(logs_part)
 
         # Save merged test cases and logs
         test_cases_save_path = os.path.join(save_dir, 'test_cases.json')

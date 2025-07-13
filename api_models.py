@@ -15,7 +15,7 @@ import re
 def api_models_map(model_name_or_path=None, token=None, **kwargs):
     if 'openrouter/' in model_name_or_path:
         model_name = model_name_or_path[11:]
-        return GPT(model_name, token, base_url='https://openrouter.ai/api/v1')
+        return OpenRouterLLM(model_name, token)
     if 'gpt-' in model_name_or_path:
         if 'vision' in model_name_or_path:
             return GPTV(model_name_or_path, token)
@@ -36,11 +36,9 @@ class GPT():
     API_MAX_RETRY = 5
     API_TIMEOUT = 60
 
-    def __init__(self, model_name, api_key, base_url=None, **kwargs):
+    def __init__(self, model_name, api_key):
         self.model_name = model_name
-        # base_url 应该是 API 域名结尾，不需要 /chat/completions
-        # 例如: "https://api.openai.com/v1"
-        self.client = OpenAI(api_key=api_key, base_url=base_url, timeout=self.API_TIMEOUT)
+        self.client = OpenAI(api_key=api_key, timeout=self.API_TIMEOUT)
 
     def _generate(self, prompt: str, 
                 max_new_tokens: int, 
@@ -76,6 +74,12 @@ class GPT():
         if use_tqdm:
             prompts = tqdm(prompts)
         return [self._generate(prompt, max_new_tokens, temperature, top_p) for prompt in prompts]
+    
+class OpenRouterLLM(GPT):
+    def __init__(self, model_name, token, base_url='https://openrouter.ai/api/v1'):
+        super().__init__(model_name, token)
+        self.client.base_url = base_url
+        print(f"==> Using OpenRouter base_url: {base_url}")
 
 class GPTV():
     API_RETRY_SLEEP = 10

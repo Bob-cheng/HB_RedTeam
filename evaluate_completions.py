@@ -7,10 +7,12 @@ import os
 import csv
 from tqdm import tqdm 
 import numpy as np
+from api_models import api_models_map
+import yaml
 
 from vllm import LLM, SamplingParams
 
-from eval_utils import compute_results_hashing, compute_results_classifier, compute_results_advbench
+from eval_utils import compute_results_hashing, compute_results_classifier, compute_results_advbench, compute_results_api
 # Set this to disable warning messages in the generation mode.
 transformers.utils.logging.set_verbosity_error()
 
@@ -49,22 +51,30 @@ def main():
     with open(args.completions_path, 'r') as f:
         completions = json.load(f)
 
-    # Load tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(args.cls_path)
-    tokenizer.truncation_side="right"
+    config_file = f"configs/model_configs/models.yaml"
+    with open(config_file) as file:
+        model_configs = yaml.full_load(file)
+    if args.cls_path in model_configs and model_configs[args.cls_path]['model_type'] == 'closed_source':
+        model_name_or_path = model_configs[args.cls_path]['model']['model_name_or_path']
+        api_key = model_configs[args.cls_path]['model']['token']
+        api_model = api_models_map(model_name_or_path, api_key)
+    else:
+        api_model = None
+        # Load tokenizer
+        tokenizer = AutoTokenizer.from_pretrained(args.cls_path)
+        tokenizer.truncation_side="right"
 
-    # Clip the 'generation' field of the completions to have a maximum of num_tokens tokens
-    for behavior_id, completion_list in completions.items():
-        for completion in completion_list:
-            generation = completion['generation']
-            tokenized_text = tokenizer.encode(generation, max_length=args.num_tokens, truncation=True)
-            clipped_generation = tokenizer.decode(tokenized_text, skip_special_tokens=True)
-            completion['generation'] = clipped_generation
+        # Clip the 'generation' field of the completions to have a maximum of num_tokens tokens
+        for behavior_id, completion_list in completions.items():
+            for completion in completion_list:
+                generation = completion['generation']
+                tokenized_text = tokenizer.encode(generation, max_length=args.num_tokens, truncation=True)
+                clipped_generation = tokenizer.decode(tokenized_text, skip_special_tokens=True)
+                completion['generation'] = clipped_generation
+        cls = LLM(model=args.cls_path, tensor_parallel_size=1)
+        cls.llm_engine.tokenizer.tokenizer.truncation_side="left"
 
     # ========== evaluate completions ========== #
-    cls = LLM(model=args.cls_path, tensor_parallel_size=1)
-    cls.llm_engine.tokenizer.tokenizer.truncation_side="left"
-
     cls_params = SamplingParams(temperature=0.0, max_tokens=1)
 
     results = {}
@@ -77,6 +87,8 @@ def main():
 
         if 'hash_check' in tags:
             current_results = compute_results_hashing(behavior_dict, data)
+        elif api_model is not None:
+            current_results = compute_results_api(behavior_dict, data, api_model, cls_params)
         else:
             current_results = compute_results_classifier(behavior_dict, data, cls, cls_params)
         

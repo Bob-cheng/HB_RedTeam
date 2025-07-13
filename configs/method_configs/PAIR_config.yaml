@@ -252,7 +252,7 @@ gemini:
     project_id: project_id
     location: us-central1
 
-<model_name1>:
+qwen-2.5-7b:
   target_model:
     model_name_or_path: <model_name1>['model']['model_name_or_path']
     token: <model_name1>['model']['token']
