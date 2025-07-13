@@ -13,6 +13,16 @@ transformers.utils.logging.set_verbosity_error()
 
 import argparse
 
+
+# import debugpy # 1. 导入 debugpy
+# # 2. 设置监听端口并等待调试器附加
+# # 地址 0.0.0.0 表示接受任何IP的连接，5678是常用调试端口
+# debugpy.listen(("0.0.0.0", 5678)) 
+# print("Debugger is listening on port 5678. Waiting for VS Code to attach...")
+# debugpy.wait_for_client() 
+# print("Debugger attached!")
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Running red teaming with baseline methods.")
     parser.add_argument("--method_name", type=str, default='GCG',

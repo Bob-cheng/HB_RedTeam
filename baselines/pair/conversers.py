@@ -105,9 +105,10 @@ class AttackLM():
             # Get prompts
             if "gpt" in self.model_name_or_path or 'openrouter/' in self.model_name_or_path:
                 full_prompts.append(conv.to_openai_api_messages())
+                conv.append_message(conv.roles[1], '') # 为了和自部署模型统一，响应下方的.update_last_message(json_str) 方法直接更新模型回复。
             else:
                 conv.append_message(conv.roles[1], init_message)
-                full_prompts.append(conv.get_prompt()[:-len(conv.sep2)])
+                full_prompts.append(conv.get_prompt()[:-len(conv.sep2)]) # 把原有的assistant回复的终止符sep2去掉，相当于让模型从init_message开始继续生成
         for attempt in range(self.max_retries):
             # Subset conversations based on indices to regenerate
             full_prompts_subset = [full_prompts[i] for i in indices_to_regenerate]
@@ -125,7 +126,7 @@ class AttackLM():
 
             for i, full_output in enumerate(outputs_list):
                 orig_index = indices_to_regenerate[i]
-                if "gpt" not in self.model_name_or_path and "openrouter/" not in self.model_name_or_path:
+                if "gpt" not in self.model_name_or_path and "openrouter/" not in self.model_name_or_path: # 针对非API模型，要把生成的内容和init_message拼接起来，作为完整的模型回复。
                     full_output = init_message + full_output
                     if full_output[-1] != "}": full_output += "}"
                 attack_dict, json_str = extract_json(full_output)

@@ -49,7 +49,7 @@ class GPT():
             try:
                 response = self.client.chat.completions.create(
                     model=self.model_name,
-                    messages=[{"role": "user", "content": prompt}],
+                    messages=[{"role": "user", "content": prompt}], # 这是completion阶段的模型生成，所以只有单轮对话。
                     max_tokens=max_new_tokens,
                     temperature=temperature,
                     top_p=top_p,
