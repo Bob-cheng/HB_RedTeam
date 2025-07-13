@@ -1,6 +1,6 @@
 #!/bin/bash
 base_save_dir="/home/bob/learn_LLM/HarmBench/results"
-experiment_name="qwen-2.5-7b" 
+experiment_name="qwen-3-4b" 
 method_name="PAIR"
 save_dir="$base_save_dir/$method_name/$experiment_name/test_cases"
 

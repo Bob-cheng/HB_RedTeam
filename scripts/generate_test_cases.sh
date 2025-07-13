@@ -14,7 +14,7 @@ source /opt/rh/devtoolset-10/enable
 
 base_save_dir="results"
 method_name="PAIR"
-experiment_name="qwen-2.5-7b"
+experiment_name="qwen-3-4b"
 behaviors_path="./data/behavior_datasets/harmbench_behaviors_text_val.csv"
 save_dir="${base_save_dir}/${method_name}/${experiment_name}/test_cases"
 start_idx=0

@@ -77,6 +77,9 @@ class GPT():
     
 class OpenRouterLLM(GPT):
     def __init__(self, model_name, token, base_url='https://openrouter.ai/api/v1'):
+        if token == '':
+            token = 'EMPTY_KEY'
+            base_url = "http://0.0.0.0:9016/v1"
         super().__init__(model_name, token)
         self.client.base_url = base_url
         print(f"==> Using OpenRouter base_url: {base_url}")

@@ -318,6 +318,12 @@ qwen-2.5-7b:
     token: *key
   model_type: closed_source
 
+qwen-3-4b:
+  model:
+    model_name_or_path: openrouter/Qwen/Qwen3-4B
+    token: "" # 对于本地vllm部署的服务端模型，token需要设置为空字符串。
+  model_type: closed_source
+
 gemini-2.5-flash:
   model:
     model_name_or_path: openrouter/google/gemini-2.5-flash

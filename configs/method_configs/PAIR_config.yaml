@@ -251,6 +251,8 @@ gemini:
     project_id: project_id
     location: us-central1
 
+openrouter_api_key: &key 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
+
 qwen-2.5-7b:
   target_model:
     model_name_or_path: <model_name1>['model']['model_name_or_path']
@@ -258,9 +260,23 @@ qwen-2.5-7b:
     fschat_template: chatgpt
   attack_model:
     model_name_or_path: openrouter/deepseek/deepseek-chat-v3-0324
-    token: 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
+    token: *key
     fschat_template: chatgpt
   judge_model:
     model_name_or_path: openrouter/google/gemini-2.5-flash
-    token: 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
+    token: *key
+    fschat_template: chatgpt
+
+qwen-3-4b:
+  target_model:
+    model_name_or_path: <model_name1>['model']['model_name_or_path']
+    token: <model_name1>['model']['token']
+    fschat_template: chatgpt
+  attack_model:
+    model_name_or_path: openrouter/deepseek/deepseek-chat-v3-0324
+    token: *key
+    fschat_template: chatgpt
+  judge_model:
+    model_name_or_path: openrouter/google/gemini-2.5-flash
+    token: *key
     fschat_template: chatgpt

@@ -13,8 +13,8 @@ base_save_dir="./results"
 
 # Often, the experiment name will be the same as the model name. It can be different for transfer attacks.
 method_name="PAIR"
-experiment_name="qwen-2.5-7b" 
-model_name="qwen-2.5-7b" # from configs/model_configs/models.yaml
+experiment_name="qwen-3-4b" 
+model_name="qwen-3-4b" # from configs/model_configs/models.yaml
 behaviors_path="./data/behavior_datasets/harmbench_behaviors_text_val.csv"
 max_new_tokens=512
 incremental_update="True"
