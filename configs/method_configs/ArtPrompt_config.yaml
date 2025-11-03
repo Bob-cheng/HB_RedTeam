@@ -8,3 +8,7 @@ default_method_hyperparameters:
 <model_name1>:
   target_model: <model_name1>['model']
 
+qwen-2.5-72b:
+  masking_model: openrouter/qwen/qwen3-235b-a22b-2507
+  masking_model_key: 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
+  target_model: <model_name1>['model']

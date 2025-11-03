@@ -11,3 +11,16 @@ mixtral_attacker_llm:
   model:
     model_name_or_path: mistralai/Mixtral-8x7B-Instruct-v0.1
   num_gpus: 2
+
+# qwen-2.5-72b:
+#   model:
+#     model_name_or_path: <model_name1>['model']['model_name_or_path']
+#     token: <model_name1>['model']['token']
+#     fschat_template: chatgpt
+
+qwen-2.5-72b:
+  model:
+    model_name_or_path: Qwen/Qwen3-4B
+    chat_template: qwen-no-think
+    max_model_len: 32768
+  num_gpus: 1

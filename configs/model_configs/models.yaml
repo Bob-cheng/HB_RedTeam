@@ -330,6 +330,18 @@ gemini-2.5-flash:
     token: *key
   model_type: closed_source
 
+qwen-2.5-72b:
+  model:
+    model_name_or_path: openrouter/qwen/qwen-2.5-72b-instruct
+    token: *key
+  model_type: closed_source
+
+qwen-3-235b:
+  model:
+    model_name_or_path: openrouter/qwen/qwen3-235b-a22b-2507
+    token: *key
+  model_type: closed_source
+
 
 # ===================== Open-Source Multimodal Models ===================== #
 

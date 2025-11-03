@@ -3,3 +3,6 @@ default_method_hyperparameters:
 
 default:
   placeholder: placeholder
+
+qwen-2.5-72b:
+  placeholder: placeholder

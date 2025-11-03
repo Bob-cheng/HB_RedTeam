@@ -10,7 +10,8 @@ from .language_models import load_indiv_model
 
 
 class PAP(SingleBehaviorRedTeamingMethod):
-    use_ray = True
+    # use_ray = True
+    use_ray = False
 
     def __init__(self,
                 attack_model,

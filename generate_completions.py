@@ -295,44 +295,5 @@ def load_generation_function(model_config, max_new_tokens, test_cases_path, gene
         return partial(_hf_generate_with_batching, model=model, tokenizer=tokenizer, template=TEMPLATE, **generation_kwargs)
 
 
-
-def bubble_sort(arr):
-    """
-    冒泡排序算法实现
-    
-    Args:
-        arr: 待排序的数字列表
-        
-    Returns:
-        List: 按升序排列的列表
-    """
-    # Handle edge cases
-    if not isinstance(arr, list):
-        raise TypeError("Input must be a list")
-    
-    if len(arr) <= 1:
-        return arr.copy()  # Return a copy to avoid modifying the original
-    
-    # Work on a copy to avoid modifying the original array
-    arr_copy = arr.copy()
-    n = len(arr_copy)
-    
-    # Traverse through all array elements
-    for i in range(n):
-        # Flag to optimize - if no swapping occurs, array is sorted
-        swapped = False
-        # Last i elements are already in place
-        for j in range(0, n - i - 1):
-            # Traverse the array from 0 to n-i-1
-            # Swap if the element found is greater than the next element
-            if arr_copy[j] > arr_copy[j + 1]:
-                arr_copy[j], arr_copy[j + 1] = arr_copy[j + 1], arr_copy[j]
-                swapped = True
-        # If no swapping occurred, array is sorted
-        if not swapped:
-            break
-    return arr_copy
-
-
 if __name__ == "__main__":
     main()

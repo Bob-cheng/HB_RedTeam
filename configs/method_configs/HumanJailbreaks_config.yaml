@@ -6,3 +6,6 @@ all_jailbreaks:
 
 random_subset_5:
   random_subset: 5
+
+qwen-2.5-72b:
+  random_subset: 2

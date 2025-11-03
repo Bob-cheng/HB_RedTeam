@@ -61,6 +61,17 @@ class GPT:
             
         else:
             return self.eval_call_wrapper(prompt, n=n,   **kwargs)
+        
+class OpenRouterLLM(GPT):
+    def __init__(self, model_name, token, base_url='https://openrouter.ai/api/v1'):
+        if token == '':
+            token = 'EMPTY_KEY'
+            base_url = "http://0.0.0.0:9016/v1"
+        super().__init__(model_name, api_key=token)
+        self.client.base_url = base_url
+        print(f"==> Using OpenRouter base_url: {base_url}")
+
+
 class Gemini:
     FAILED_OUTPUT = "Sorry, I can't assist with that."
     def __init__(self, temperature=0, api_key=None) -> None:
@@ -204,9 +215,11 @@ class Llama_api:
         return [response.choices[i].message.content for i in range(n)]
 
 def load_model(model_name, api_key, **kwargs):
-    if "gpt" in model_name and "gpt2" not in model_name:
+    if 'openrouter/' in model_name:
+        model_name = model_name[11:]
+        return OpenRouterLLM(model_name, token=api_key)
+    elif "gpt" in model_name and "gpt2" not in model_name:
         return GPT(model_name, api_key=api_key, **kwargs)
-    
     elif "gpt2" in model_name:
         return GPT2(model_name, api_key=api_key, **kwargs)
 

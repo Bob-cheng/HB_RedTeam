@@ -18,7 +18,7 @@ CONTEXTUAL_BEHAVIOR_PROMPT_TEMPLATE = {
 }
 
 class ZeroShot(RedTeamingMethod):
-    use_ray = True
+    use_ray = False
 
     def __init__(self, model, num_gpus, generation_config, num_test_cases_per_behavior=100, **kwargs):
         """

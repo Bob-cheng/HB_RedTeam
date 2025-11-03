@@ -9,7 +9,7 @@ import json
 
 
 class TAP(SingleBehaviorRedTeamingMethod):
-    use_ray = True
+    use_ray = False
     
     def __init__(self, attack_model, target_model, judge_model, targets_path,
                 attack_max_n_tokens, target_max_n_tokens, judge_max_n_tokens,

@@ -5,6 +5,15 @@ default_method_hyperparameters:
     temperature: 1.0
     stop_tokens: ['|']
 
+openrouter_api_key: &key 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
+
+qwen-2.5-72b:
+  attack_model:
+    model_name_or_path: openrouter/deepseek/deepseek-chat-v3-0324
+    token: *key
+    fschat_template: chatgpt
+  top_k_persuasion_taxonomy: 5
+
 top_5:
   attack_model:
     model_name_or_path: mistralai/Mixtral-8x7B-Instruct-v0.1

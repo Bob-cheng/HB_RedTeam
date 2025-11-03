@@ -121,6 +121,11 @@ QWEN_CHAT_PROMPT = {
     "prompt": "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n{instruction}<|im_end|>\n<|im_start|>assistant\n"
 }
 
+QWEN_CHAT_PROMPT_NO_THINK = {
+    "description": "Template used by Qwen-chat models",
+    "prompt": "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n{instruction}<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"
+}
+
 ZEPHYR_ROBUST_PROMPT = {
     "description": "",
     "prompt": "<|user|>\n{instruction}</s>\n<|assistant|>\n"
@@ -175,6 +180,8 @@ def get_template(model_name_or_path=None, chat_template=None, fschat_template=No
         TEMPLATE = BAICHUAN_CHAT_PROMPT
     elif chat_template == "qwen":
         TEMPLATE = QWEN_CHAT_PROMPT
+    elif chat_template == "qwen-no-think":
+        TEMPLATE = QWEN_CHAT_PROMPT_NO_THINK
     elif chat_template == "zephyr_7b_robust":
         TEMPLATE = ZEPHYR_ROBUST_PROMPT
     else:
@@ -306,7 +313,8 @@ def load_vllm_model(
         _init_ray(reinit=False)
     
     # make it flexible if we want to add anything extra in yaml file
-    model_kwargs = {k: kwargs[k] for k in kwargs if k in signature(LLM).parameters}
+    model_kwargs = {k: kwargs[k] for k in kwargs if k in signature(LLM).parameters or k == 'max_model_len'}
+    # model = LLM(model="Qwen/Qwen3-4B", tensor_parallel_size=1, max_model_len=32768)
     model = LLM(model=model_name_or_path, 
                 dtype=dtype,
                 trust_remote_code=trust_remote_code,
@@ -314,7 +322,7 @@ def load_vllm_model(
                 revision=revision,
                 quantization=quantization,
                 tokenizer_mode="auto" if use_fast_tokenizer else "slow",
-                tensor_parallel_size=num_gpus)
+                tensor_parallel_size=num_gpus, **model_kwargs)
     
     if pad_token:
         model.llm_engine.tokenizer.tokenizer.pad_token = pad_token

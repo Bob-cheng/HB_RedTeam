@@ -117,6 +117,7 @@ class GPT(LanguageModel):
                     top_p=top_p,
                 )
                 output = response.choices[0].message.content
+                print(output)
                 break
             except openai.OpenAIError as e:
                 print(type(e), e)
@@ -131,6 +132,15 @@ class GPT(LanguageModel):
                         temperature: float,
                         top_p: float = 1.0, **kwargs):
         return [self.generate(conv, max_n_tokens, temperature, top_p) for conv in convs_list]
+    
+class OpenRouterLLM(GPT):
+    def __init__(self, model_name, token, base_url='https://openrouter.ai/api/v1'):
+        if token == '':
+            token = 'EMPTY_KEY'
+            base_url = "http://0.0.0.0:9016/v1"
+        super().__init__(model_name, token)
+        self.client.base_url = base_url
+        print(f"==> Using OpenRouter base_url: {base_url}")
 
 class Claude():
     API_RETRY_SLEEP = 10

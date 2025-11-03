@@ -12,16 +12,22 @@ source /opt/rh/devtoolset-10/enable
 # overwrite="$9"
 # verbose="${10}"
 
+
+#### Method Specific ####
+method_name="DirectRequest"
+start_idx="0"
+end_idx="" # first 20 validation behaviors
+
+
+
+### common params ###
 base_save_dir="results"
-method_name="PAIR"
-experiment_name="qwen-3-4b"
-behaviors_path="./data/behavior_datasets/harmbench_behaviors_text_val.csv"
+experiment_name="qwen-2.5-72b"
+behaviors_path="./data/behavior_datasets/harmbench_behaviors_text_test.csv"
 save_dir="${base_save_dir}/${method_name}/${experiment_name}/test_cases"
-start_idx=0
-end_idx=3 # first 20 validation behaviors
 behavior_ids_subset=""
 run_id="0"  # useful when running multiple times with different seeds, to differentiate the output files
-overwrite="True"
+overwrite="False"
 verbose="True"
 
 echo "method_name=$method_name"

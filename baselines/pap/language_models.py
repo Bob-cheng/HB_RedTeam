@@ -12,8 +12,12 @@ from ..model_utils import load_model_and_tokenizer, load_vllm_model, get_templat
 import ray
 
 
+
 def load_indiv_model(model_name_or_path, use_vllm=False, token=None, **model_kwargs):
-    if 'gpt-' in model_name_or_path:
+    if 'openrouter/' in model_name_or_path:
+        model_name = model_name_or_path[11:]
+        lm = OpenRouterLLM(model_name, token=token)
+    elif 'gpt-' in model_name_or_path:
         lm = GPT(model_name_or_path, token=token)
     elif 'claude-' in model_name_or_path:
         lm = Claude(model_name_or_path, token=token)
@@ -272,3 +276,12 @@ class Gemini():
                         temperature: float,
                         top_p: float = 1.0, **kwargs):
         return [self.generate(_input, max_new_tokens, temperature, top_p) for _input in inputs]
+
+class OpenRouterLLM(GPT):
+    def __init__(self, model_name, token, base_url='https://openrouter.ai/api/v1'):
+        if token == '':
+            token = 'EMPTY_KEY'
+            base_url = "http://0.0.0.0:9016/v1"
+        super().__init__(model_name, token)
+        self.client.base_url = base_url
+        print(f"==> Using OpenRouter base_url: {base_url}")

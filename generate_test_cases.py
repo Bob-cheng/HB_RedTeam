@@ -1,4 +1,5 @@
 import transformers
+from vllm import LLM # import this before importing spacy, otherwise there will be conflicts
 from baselines import get_method_class, init_method
 import yaml
 import argparse
