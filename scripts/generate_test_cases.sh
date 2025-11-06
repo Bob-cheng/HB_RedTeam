@@ -14,7 +14,7 @@ source /opt/rh/devtoolset-10/enable
 
 
 #### Method Specific ####
-method_name="DirectRequest"
+method_name="ZeroShot"
 start_idx="0"
 end_idx="" # first 20 validation behaviors
 
@@ -27,7 +27,7 @@ behaviors_path="./data/behavior_datasets/harmbench_behaviors_text_test.csv"
 save_dir="${base_save_dir}/${method_name}/${experiment_name}/test_cases"
 behavior_ids_subset=""
 run_id="0"  # useful when running multiple times with different seeds, to differentiate the output files
-overwrite="False"
+overwrite="True"
 verbose="True"
 
 echo "method_name=$method_name"
